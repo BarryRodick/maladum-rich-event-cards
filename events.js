@@ -27,6 +27,18 @@ function shouldAdvanceDeckFromClick(target) {
     return Boolean(target.closest('[data-deck-surface="true"]')) && !target.closest('#clearActiveCard');
 }
 
+function rewindActiveCardForClear() {
+    if (state.currentIndex > 0) {
+        state.currentIndex--;
+        if (state.discardPile.length > 0) {
+            state.discardPile.pop();
+        }
+        return;
+    }
+
+    state.currentIndex = -1;
+}
+
 export function setupEventListeners() {
     const buildModeButton = document.getElementById('buildModeButton');
     if (buildModeButton) {
@@ -180,7 +192,7 @@ export function setupEventListeners() {
     if (clearActiveCardBtn) {
         clearActiveCardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            state.currentIndex = -1;
+            rewindActiveCardForClear();
             showCurrentCard();
             trackEvent('Navigation', 'Clear Active Card', null);
         });

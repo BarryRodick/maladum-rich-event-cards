@@ -127,7 +127,7 @@ export const cardActions = {
         const actualN = Math.min(requestedN, remaining);
 
         state.currentDeck.splice(state.currentIndex, 1);
-        const insertIdx = state.currentIndex + Math.floor(Math.random() * actualN);
+        const insertIdx = state.currentIndex + 1 + Math.floor(Math.random() * actualN);
         state.currentDeck.splice(insertIdx, 0, card);
 
         showCurrentCard();

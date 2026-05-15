@@ -25,6 +25,81 @@ function createTarget(matches = {}) {
     };
 }
 
+function createClickableElement() {
+    const listeners = {};
+    return {
+        addEventListener(type, handler) {
+            listeners[type] = handler;
+        },
+        click() {
+            listeners.click?.({
+                stopPropagation() { },
+                preventDefault() { },
+                target: this
+            });
+        }
+    };
+}
+
+function loadSetupEventListeners(state, document, calls = {}) {
+    const file = path.join(__dirname, '..', 'events.js');
+    let code = fs.readFileSync(file, 'utf8');
+    code = code.replace(/import[\s\S]*?;\r?\n/g, '');
+    code = code.replace(/export function /g, 'function ');
+
+    const factory = new Function(
+        'generateDeck',
+        'advanceToNextCard',
+        'showCurrentCard',
+        'triggerCardAction',
+        'markCardAsInPlay',
+        'updateInPlayCardsDisplay',
+        'shuffleCardIntoTopN',
+        'insertSpecificCardById',
+        'state',
+        'trackEvent',
+        'debounce',
+        'saveConfiguration',
+        'setupManualUpdateCheck',
+        'updateCardSearchResults',
+        'showCardPreview',
+        'setDeckMode',
+        'toggleUtilityDrawer',
+        'openBuildTools',
+        'openSearchTools',
+        'renderDeckSummary',
+        'buildPreviewActionRequest',
+        'document',
+        `${code}; return { setupEventListeners };`
+    );
+
+    const noop = () => { };
+    return factory(
+        noop,
+        noop,
+        () => { calls.showCurrentCard = (calls.showCurrentCard || 0) + 1; },
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        state,
+        noop,
+        fn => fn,
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        noop,
+        document
+    );
+}
+
 console.log('Testing live deck click guard...');
 
 const shouldAdvanceDeckFromClick = loadShouldAdvanceDeckFromClick();
@@ -57,5 +132,44 @@ assert.strictEqual(
     false,
     'Missing click targets should fail closed'
 );
+
+{
+    const clearActiveCard = createClickableElement();
+    const state = {
+        currentIndex: 2,
+        currentDeck: [
+            { id: 1, card: 'A' },
+            { id: 2, card: 'B' },
+            { id: 3, card: 'C' }
+        ],
+        discardPile: [
+            { id: 1, card: 'A' },
+            { id: 2, card: 'B' }
+        ]
+    };
+    const calls = {};
+    const document = {
+        getElementById(id) {
+            return id === 'clearActiveCard' ? clearActiveCard : null;
+        },
+        querySelectorAll() {
+            return [];
+        },
+        querySelector() {
+            return null;
+        }
+    };
+    const { setupEventListeners } = loadSetupEventListeners(state, document, calls);
+
+    setupEventListeners();
+    clearActiveCard.click();
+
+    assert.strictEqual(state.currentIndex, 1,
+        'Clearing a mid-deck active card should rewind one position so the same card can be drawn again');
+    assert.deepStrictEqual(state.discardPile.map(card => card.id), [1],
+        'Clearing a mid-deck active card should also rewind the discard pile to avoid duplicate discards');
+    assert.strictEqual(calls.showCurrentCard, 1,
+        'Clearing the active card should refresh the deck display');
+}
 
 console.log('All live deck click guard tests passed!');

@@ -87,7 +87,6 @@ export function generateDeck() {
     state.cards.selected.clear();
 
     const cardCounts = {};
-    const specialCardCounts = {};
     const sentryCardCounts = {};
 
     state.allCardTypes.forEach(type => {
@@ -97,16 +96,25 @@ export function generateDeck() {
 
         if (state.dataStore.sentryTypes.includes(type) && state.enableSentryRules) {
             sentryCardCounts[type] = count;
-        } else if (state.dataStore.corrupterTypes.includes(type) && state.enableCorrupterRules) {
-            specialCardCounts[type] = count;
-        } else {
-            cardCounts[type] = count;
+            return;
         }
+
+        if (state.dataStore.corrupterTypes.includes(type) && state.enableCorrupterRules) {
+            return;
+        }
+
+        cardCounts[type] = count;
     });
 
     // 1. Set Aside Cards Based on heldBackCardTypes
+    const selectedGameSet = new Set(state.selectedGames);
+    const reusableSetAsideCards = state.setAsideCards.filter(card => card && (!card.game || selectedGameSet.has(card.game)));
+    const generationCards = dedupeCardsById([
+        ...state.availableCards,
+        ...reusableSetAsideCards
+    ]);
     state.setAsideCards = [];
-    state.availableCards = state.availableCards.filter(card => {
+    state.availableCards = generationCards.filter(card => {
         const typeInfo = parseCardTypes(card.type);
         const isHeldBack = typeInfo.allTypes.some(t => state.dataStore.heldBackCardTypes.includes(t));
         if (isHeldBack) {
@@ -130,20 +138,9 @@ export function generateDeck() {
         }
     });
 
-    // Corrupter cards
-    let hasSpecialCardSelection = false;
-    if (state.enableCorrupterRules) {
-        state.allCardTypes.forEach(type => {
-            if (state.dataStore.corrupterTypes.includes(type)) {
-                const count = specialCardCounts[type];
-                if (count > 0) {
-                    hasSpecialCardSelection = true;
-                    const selected = selectCardsByType(type, count, state.cards.selected, specialCardCounts);
-                    state.deck.special = state.deck.special.concat(selected);
-                }
-            }
-        });
-    }
+    const corrupterReplacementCount = state.enableCorrupterRules
+        ? CONFIG.deck.corrupter.defaultCount
+        : 0;
 
     // Sentry cards
     if (state.enableSentryRules) {
@@ -158,19 +155,19 @@ export function generateDeck() {
         });
     }
 
-    if (!hasRegularCardSelection && !hasSpecialCardSelection && state.sentryDeck.length === 0) {
+    if (!hasRegularCardSelection && state.sentryDeck.length === 0) {
         showToast('Please select at least one card type with a count greater than zero.');
         return;
     }
 
     // Apply Corrupter replacement Rules
-    if (state.enableCorrupterRules && state.deck.main.length >= 5) {
-        // Since we shuffle at the end, we can validly just remove the first 5 cards
-        // instead of splicing from random indices 5 times.
-        state.deck.main.splice(0, 5);
+    if (state.enableCorrupterRules && corrupterReplacementCount > 0 && state.deck.main.length >= corrupterReplacementCount) {
+        // Since we shuffle at the end, we can remove from the front instead of
+        // splicing random indices for each replacement.
+        const corrupterCards = getSpecialCards(corrupterReplacementCount, state.dataStore.corrupterTypes);
+        state.deck.main.splice(0, corrupterCards.length);
 
-        // Replace with 5 special
-        const corrupterCards = getSpecialCards(5, state.dataStore.corrupterTypes);
+        // Replace with configured Corrupter cards.
         state.deck.main = state.deck.main.concat(corrupterCards);
     }
 
@@ -208,9 +205,22 @@ export function generateDeck() {
 /**
  * Core selection logic
  */
+function dedupeCardsById(cards) {
+    const byId = new Map();
+    cards.forEach(card => {
+        if (card && card.id !== undefined && !byId.has(card.id)) {
+            byId.set(card.id, card);
+        }
+    });
+    return [...byId.values()];
+}
+
 function selectCardsByType(cardType, count, selectedCardsMap, cardCounts) {
     let selectedCards = [];
-    let cardsOfType = state.availableCards.filter(card => {
+    const candidateCards = state.dataStore.heldBackCardTypes.includes(cardType)
+        ? state.setAsideCards
+        : state.availableCards;
+    let cardsOfType = candidateCards.filter(card => {
         const typeInfo = parseCardTypes(card.type);
         return typeInfo.allTypes.includes(cardType);
     });

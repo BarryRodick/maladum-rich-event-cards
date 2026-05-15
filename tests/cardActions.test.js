@@ -48,7 +48,7 @@ function loadCardActions(state, overrides = {}) {
 console.log('Testing card actions...');
 
 // ============================
-// Test: shuffleTopN bounds
+// Test: shuffleTopN advances the active slot
 // ============================
 {
     const state = {
@@ -65,7 +65,7 @@ console.log('Testing card actions...');
     const { cardActions } = loadCardActions(state);
 
     const originalRandom = Math.random;
-    Math.random = () => 0.999;
+    Math.random = () => 0;
 
     const active = state.currentDeck[state.currentIndex];
     const result = cardActions.shuffleTopN(active, 2);
@@ -74,8 +74,10 @@ console.log('Testing card actions...');
     Math.random = originalRandom;
 
     assert.strictEqual(result.includes('next 2 cards'), true, 'shuffleTopN should report the correct N');
-    assert(newIndex >= state.currentIndex && newIndex <= state.currentIndex + 1,
-        'shuffleTopN should insert within the next N cards');
+    assert(newIndex > state.currentIndex && newIndex <= state.currentIndex + 2,
+        'shuffleTopN should insert after the active slot within the next N cards');
+    assert.strictEqual(state.currentDeck[state.currentIndex].id, 3,
+        'shuffleTopN should reveal the next card after moving the active card');
 }
 
 // ============================

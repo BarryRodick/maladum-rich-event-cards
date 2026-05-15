@@ -1,0 +1,2663 @@
+@font-face {
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('./vendor/fonts/cinzel-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('./vendor/fonts/cinzel-latin-700-normal.woff2') format('woff2');
+}
+
+body.dark-mode {
+    background-color: var(--dark-bg);
+    background-image: url('logos/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    position: relative;
+    /* To ensure ::before overlay works correctly */
+}
+
+body.dark-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: -1;
+}
+
+/* Glass panel for main content */
+.glass-panel {
+    background: linear-gradient(135deg, rgba(32, 32, 32, 0.6), rgba(12, 12, 12, 0.35));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(130%);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--glass-noise);
+    background-size: 140px 140px;
+    opacity: 0.08;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+.glass-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Game Checkboxes Styling */
+#gameCheckboxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 8px;
+    color: #ffffff;
+}
+
+/* Ensure the Select Games section fully collapses */
+#gameCheckboxes.collapse:not(.show),
+#gameCheckboxes.collapsing {
+    display: none;
+    padding: 0;
+}
+
+#gameCheckboxes.collapse.show {
+    display: grid !important;
+}
+
+/* Dark Mode Card Styling */
+body.dark-mode .card {
+    background-color: var(--parchment);
+    border: 1px solid var(--border-ornate);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('logos/parchment-texture.png');
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.card-item strong {
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Black background with 70% opacity */
+    color: #ffffff;
+    /* White text for contrast */
+    padding: 5px 10px;
+    /* Add some padding around the text */
+    border-radius: 4px;
+    /* Slightly round the corners */
+}
+
+/* Base Button Reset - specific buttons will style themselves */
+.btn {
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:active,
+.button-pressed {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Ripple Effect */
+.btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* App Header Styling */
+.app-header {
+    background: linear-gradient(to bottom, #000000, #1a0000);
+    border-bottom: 2px solid var(--maladum-red);
+    color: white;
+    padding: 10px 20px;
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+}
+
+.app-logo-text {
+    color: var(--maladum-gold);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 24px;
+    font-weight: normal;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.app-logo-text:hover {
+    color: #cccccc;
+    text-decoration: none;
+}
+
+/* Header Icons and Buttons */
+.faq-icon {
+    font-size: 1.5rem;
+    color: #ffffff;
+    text-decoration: none;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+    transition: transform 0.2s ease;
+}
+
+.faq-icon:hover {
+    color: #cccccc;
+    text-decoration: none;
+}
+
+.faq-icon:hover .fa-scroll,
+.faq-icon:hover .fa-question-circle,
+.faq-icon:hover .fa-home {
+    transform: scale(1.1);
+}
+
+.bmc-button-container {
+    margin-left: 15px;
+}
+
+/* Responsive header adjustments */
+@media (max-width: 576px) {
+    .app-header {
+        padding: 0.5rem !important;
+    }
+
+    .app-logo-text {
+        font-size: 1.5rem;
+    }
+
+    .faq-icon {
+        font-size: 1.2rem;
+        margin-left: 10px;
+    }
+
+    .bmc-button-container {
+        transform: scale(0.8);
+        transform-origin: right center;
+    }
+}
+
+#headerButtons {
+    display: flex;
+    gap: 10px;
+    /* Space between the buttons */
+    flex-wrap: wrap;
+    /* allow wrapping on narrow screens */
+}
+
+#headerButtons .btn {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(0, 19, 0, 0.6);
+    /* Slight background for visibility */
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#headerButtons .btn:hover {
+    background-color: rgba(1, 87, 1, 0.8);
+    /* Darker green background on hover */
+}
+
+/* Card Item Styling */
+.card-item {
+    text-align: center;
+    transition: opacity 0.5s ease-in-out;
+    margin: 0 auto;
+    max-width: 360px;
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 2 / 3;
+    height: auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #001300;
+    border-radius: 8px;
+}
+
+/* Updated Progress Bar Styles */
+.progress {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
+    height: 1.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar {
+    background: linear-gradient(to right, var(--accent-green), var(--accent-green-hover));
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.75rem;
+    color: #ffffff;
+    border-radius: 1rem;
+    transition: width 0.6s ease;
+}
+
+.progress-text {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Card Type Input Container Styling */
+.card-type-input {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #ffffff;
+}
+
+.card-type-input__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.card-type-input__label-group {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+}
+
+.card-type-input__icon {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    object-fit: cover;
+}
+
+.card-type-input .card-title {
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 0;
+}
+
+.card-type-input__controls {
+    display: grid;
+    grid-template-columns: 44px 72px 44px;
+    align-items: center;
+    gap: 0.5rem;
+    justify-items: center;
+    flex: 0 0 auto;
+}
+
+.card-type-input .input-count {
+    width: 72px;
+    margin-left: 0;
+    text-align: center;
+}
+
+/* Responsive Design for Card Type Inputs */
+@media (max-width: 768px) {
+    .card-type-input__row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .card-type-input__controls {
+        justify-self: stretch;
+        width: 100%;
+        grid-template-columns: 44px minmax(64px, 72px) 44px;
+        justify-content: end;
+    }
+}
+
+/* Modal Image Styling */
+.modal-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Card Action Section Styling */
+#cardActionSection {
+    background-color: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+#cardActionSection .card-action-toggle {
+    width: 100%;
+    text-align: left;
+    padding: 0;
+}
+
+#cardActionSection .card-action-toggle i {
+    transition: transform 0.2s ease;
+}
+
+#cardActionSection .card-action-toggle[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+#actionTopNInput {
+    margin-top: 10px;
+}
+
+/* Decrease and Increase Button Styling within Card Type Inputs */
+.card-type-input .decrease-btn,
+.card-type-input .increase-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    line-height: 1;
+    text-align: center;
+    padding: 0;
+}
+
+/* Enhanced Buttons for Touch Devices */
+.button-pressed {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure the button remains responsive */
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Highlight input fields when counts are updated */
+.highlight-input {
+    background-color: #ffeb3b;
+    /* Bright yellow background */
+    transition: background-color 0.5s ease;
+}
+
+/* Adjusted CSS for Scenario Config section */
+#scenarioConfig {
+    padding: 15px;
+    border: 1px solid #444;
+    /* Darker border for contrast */
+    border-radius: 5px;
+    background-color: #333;
+    /* Dark background to match dark mode */
+    color: #ffffff;
+    /* White text for better readability */
+    margin-bottom: 20px;
+}
+
+/* Toast Container Positioning */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+
+/* Additional Styling for Select Elements in Dark Mode */
+body.dark-mode select.form-control {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #444;
+}
+
+body.dark-mode select.form-control:focus {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+/* Styling for Labels in Dark Mode */
+body.dark-mode label {
+    color: #ffffff;
+}
+
+/* Styling for Small Text in Dark Mode */
+body.dark-mode small.form-text {
+    color: #cccccc;
+}
+
+/* Ensure Inputs Have Transparent Background in Dark Mode */
+body.dark-mode input.form-control,
+body.dark-mode select.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid #444;
+}
+
+body.dark-mode input.form-control::placeholder {
+    color: #aaaaaa;
+}
+
+/* Remove default focus outline and add custom */
+input:focus,
+select:focus,
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #007bff;
+}
+
+/* Adjust Toast Background for Dark Mode */
+body.dark-mode .toast {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+/* Ensure all buttons have white text in dark mode */
+body.dark-mode .btn {
+    color: #ffffff;
+}
+
+/* Adjust Close Button in Toasts for Visibility */
+.toast .close {
+    color: #ffffff;
+    opacity: 1;
+}
+
+/* In Play Cards Section Styling (Feature 2) */
+#inPlaySection {
+    background-color: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+#inPlayCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+#inPlayCards img {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+#inPlayCards img:hover {
+    transform: scale(1.05);
+}
+
+/* Style for the FAQ icon */
+.faq-icon {
+    font-size: 1.5rem;
+    /* Adjust the size as needed */
+    color: #ffffff;
+    /* Ensure the icon contrasts with the dark header */
+    text-decoration: none;
+    margin-left: 15px;
+    /* Space between existing buttons and the icon */
+    display: flex;
+    align-items: center;
+}
+
+.faq-icon:hover {
+    color: #cccccc;
+    /* Change color on hover for better UX */
+    text-decoration: none;
+}
+
+/* Responsive adjustments if needed */
+@media (max-width: 576px) {
+    .faq-icon {
+        font-size: 1.2rem;
+        margin-left: 10px;
+    }
+}
+
+/* Dark theme enhancements */
+:root {
+    --dark-bg: #121212;
+    --dark-surface: #1e1e1e;
+    --dark-surface-lighter: #2d2d2d;
+    --accent-green: #1b5e20;
+    --accent-green-hover: #2e7d32;
+    --text-primary: rgba(255, 255, 255, 0.87);
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --maladum-red: #8B0000;
+    --maladum-gold: #C5A572;
+    --parchment: #F5E6D3;
+    --border-ornate: #2a2a2a;
+    --glass-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.35'/></svg>");
+}
+
+/* Enhanced Card Display */
+#deckOutput {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    margin-bottom: 0.75rem;
+    transition: transform 0.3s ease;
+    perspective: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#deckOutput .deck-display-root {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+}
+
+#deckOutput .deck-display-root[data-deck-surface="true"] {
+    cursor: pointer;
+}
+
+#deckOutput .deck-display-root .card-surface,
+#deckOutput .deck-display-root .deck-card-state {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#deckOutput .deck-display-root[data-render-mode="rich"] .card-surface--full,
+#deckOutput .deck-display-root[data-render-mode="image"] .card-surface--full,
+#deckOutput .deck-display-root[data-deck-state="ready"] .deck-card-state {
+    max-width: min(100%, 360px);
+}
+
+#deckOutput .deck-display-root[data-render-mode="rich"] .card-surface--full {
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(197, 165, 114, 0.08);
+}
+
+#deckOutput .deck-display-root[data-render-mode="image"] .card-image-fallback,
+#deckOutput .deck-display-root[data-deck-state="ready"] .card-image-fallback {
+    max-width: 100%;
+    max-height: 55vh;
+    height: auto;
+    object-fit: contain;
+}
+
+#deckOutput .deck-display-root[data-deck-surface="true"]:hover .card-surface,
+#deckOutput .deck-display-root[data-deck-surface="true"]:hover .deck-card-state {
+    transform: scale(1.02);
+}
+
+#deckOutput .deck-display-root[data-deck-surface="true"]:hover .card-surface--full,
+#deckOutput .deck-display-root[data-deck-surface="true"]:hover .card-image-fallback {
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.6),
+        0 0 25px rgba(197, 165, 114, 0.15);
+}
+
+/* Improved Form Controls */
+.form-control-dark {
+    background-color: var(--dark-surface);
+    border-color: var(--dark-surface-lighter);
+    color: var(--text-primary);
+}
+
+.form-control-dark:focus {
+    background-color: var(--dark-surface-lighter);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 0.2rem rgba(27, 94, 32, 0.25);
+    color: var(--text-primary);
+}
+
+/* Enhanced Buttons */
+.btn-hover-effect {
+    transition: all 0.3s ease;
+}
+
+.btn-hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--maladum-red), #4a0000);
+    border: 1px solid var(--maladum-gold);
+    color: var(--maladum-gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Cinzel', serif;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4a0000, var(--maladum-red));
+    border-color: var(--maladum-gold);
+    transform: translateY(-1px);
+}
+
+/* Navigation Buttons */
+#navigationButtons {
+    margin: 1.5rem 0;
+}
+
+#navigationButtons .btn {
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* Ensure content is above the overlay */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Enhanced Section Headers */
+.section-title {
+    color: var(--accent-green);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent-green);
+}
+
+/* Enhanced Select Dropdowns */
+select.form-control-lg {
+    background-color: rgba(45, 45, 45, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select.form-control-lg:hover {
+    background-color: rgba(55, 55, 55, 0.9);
+    border-color: var(--accent-green);
+}
+
+/* Toast Notifications Enhancement */
+.toast {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border-left: 4px solid var(--accent-green);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Loading Animation */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--accent-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Flip Animations */
+@keyframes flipInForward {
+    from {
+        transform: rotateY(90deg);
+        opacity: 0;
+    }
+
+    to {
+        transform: rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes flipInBackward {
+    from {
+        transform: rotateY(-90deg);
+        opacity: 0;
+    }
+
+    to {
+        transform: rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+.flip-forward {
+    animation: flipInForward 0.3s ease-out;
+}
+
+.flip-backward {
+    animation: flipInBackward 0.3s ease-out;
+}
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 1rem;
+    }
+
+    .app-logo-text {
+        font-size: 1.4rem;
+    }
+
+    #navigationButtons .btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.8rem;
+    }
+
+    #inPlayCards {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+}
+
+/* Checkbox Styling */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    appearance: none;
+    border: 2px solid var(--accent-green);
+    border-radius: 4px;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+    background-color: var(--accent-green);
+}
+
+.custom-checkbox input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Card Counter Inputs */
+.card-counter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-counter input[type="number"] {
+    width: 80px;
+    background-color: rgba(45, 45, 45, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+/* Navigation buttons - always horizontal */
+#navigationButtons {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0.5rem 0;
+}
+
+#navigationButtons button {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+
+    /* Adjust standard buttons */
+    button,
+    .btn {
+        min-height: 36px;
+        min-width: 36px;
+        padding: 6px 12px;
+        margin: 2px;
+        font-size: 0.9rem;
+    }
+
+    /* Navigation buttons specific styling */
+    #navigationButtons .btn {
+        min-height: 40px;
+        padding: 8px 16px;
+        margin: 4px;
+        flex: 0 1 auto;
+        min-width: auto;
+    }
+
+    /* Number input group buttons */
+    .input-group .btn {
+        min-height: 32px;
+        min-width: 32px;
+        padding: 4px 8px;
+    }
+
+    /* Header buttons */
+    .app-header .btn {
+        padding: 4px 8px;
+        min-height: 32px;
+    }
+
+    /* Buy me coffee button container */
+    .bmc-button-container {
+        transform: scale(0.8);
+        transform-origin: right center;
+    }
+
+    /* Adjust modal buttons */
+    .modal-footer .btn {
+        padding: 6px 12px;
+        min-width: 80px;
+    }
+
+    /* Card action buttons */
+    #cardActionSection .btn {
+        padding: 8px 16px;
+        margin: 4px;
+        min-width: auto;
+    }
+
+    /* Keep form controls consistent */
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    /* Adjust select dropdowns */
+    select.form-control {
+        height: 36px;
+        padding: 4px 24px 4px 8px;
+    }
+
+    /* Maintain spacing but smaller */
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Reset checkbox sizing to more reasonable dimensions */
+    input[type="checkbox"] {
+        min-height: 20px;
+        min-width: 20px;
+        padding: 0;
+        margin: 4px;
+    }
+
+    /* Improve form group layout */
+    .form-group {
+        margin-bottom: 1rem;
+        position: relative;
+        clear: both;
+    }
+
+    /* Adjust checkbox container */
+    .form-check {
+        padding-left: 1.75rem;
+        margin-bottom: 0.5rem;
+        min-height: 24px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-check-input {
+        position: absolute;
+        left: 0;
+        margin-top: 0.25rem;
+    }
+
+    /* Fix number input buttons */
+    input[type="number"] {
+        -webkit-appearance: none;
+        -moz-appearance: textfield;
+        appearance: none;
+        padding-right: 5px;
+        height: 38px;
+    }
+
+    /* Style number input spinner buttons */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Card type input container */
+    #cardTypeInputs .input-group {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    /* Adjust input group layout */
+    .input-group {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    /* Style number adjustment buttons */
+    .input-group .btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Ensure input fields don't overflow */
+    .input-group input[type="number"] {
+        width: 60px;
+        text-align: center;
+        flex: 0 0 auto;
+    }
+
+    /* Adjust label spacing */
+    .input-group label {
+        margin-right: 10px;
+        margin-bottom: 0;
+        flex: 1;
+    }
+
+    /* Other mobile adjustments remain the same */
+    button,
+    .btn,
+    select {
+        min-height: 44px;
+        padding: 8px 16px;
+        margin: 4px;
+    }
+
+    /* Prevent text selection on buttons */
+    button,
+    .btn {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* Card display - centered with subtle glow */
+    #deckOutput {
+        padding: 0.5rem;
+        margin: 0 auto;
+        max-width: 95vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #deckOutput .deck-display-root[data-deck-surface="true"] {
+        touch-action: manipulation;
+    }
+
+    #deckOutput .deck-display-root[data-render-mode="image"] .card-image-fallback,
+    #deckOutput .deck-display-root[data-deck-state="ready"] .card-image-fallback {
+        max-width: 100%;
+        height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.6),
+            0 0 20px rgba(197, 165, 114, 0.1);
+    }
+
+    /* Improve mobile navigation - always horizontal */
+    #navigationButtons {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 6px;
+        padding: 0.5rem 0;
+    }
+
+    #navigationButtons button {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    /* Adjust header for mobile */
+    .app-header {
+        padding: 0.5rem !important;
+    }
+
+    .app-logo-text {
+        font-size: 1.25rem;
+    }
+
+    /* Improve modal experience on mobile */
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: 95vw;
+    }
+
+    .modal-body {
+        padding: 1rem;
+        max-height: 70vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Improve scrolling */
+    body {
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Adjust spacing for mobile */
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Improve form elements for mobile */
+    .form-control {
+        font-size: 16px;
+        /* Prevents iOS zoom on focus */
+        height: 44px;
+    }
+
+    /* Improve select dropdowns */
+    select.form-control {
+        padding-right: 30px;
+        background-position: right 8px center;
+    }
+
+    /* Adjust card actions section */
+    #cardActionSection {
+        position: sticky;
+        bottom: 0;
+        background: var(--dark-surface);
+        padding: 10px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+    }
+
+    /* Improve in-play cards display */
+    #inPlayCards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+
+    #inPlayCards img {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Add pull-to-refresh visual indicator */
+    @keyframes pullToRefresh {
+        from {
+            transform: translateY(0);
+        }
+
+        to {
+            transform: translateY(10px);
+        }
+    }
+
+    /* Improve touch feedback */
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    /* Hide scrollbars but keep functionality */
+    ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+
+    /* Prevent text size adjustment */
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+}
+
+/* Add dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #ffffff;
+    }
+}
+
+/* Add landscape orientation improvements */
+@media (max-width: 768px) and (orientation: landscape) {
+    #deckOutput {
+        max-height: 70vh;
+    }
+
+    #navigationButtons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .modal-dialog {
+        max-width: 90vw;
+    }
+}
+
+/* Add media query for mobile responsiveness */
+@media (max-width: 576px) {
+    #gameCheckboxes {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Add fallback for missing images */
+img {
+    /* existing styles... */
+
+    /* Add fallback background color */
+    background-color: #333;
+}
+
+img::before {
+    content: attr(alt);
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+}
+
+/* Handle broken images (fallback via background) */
+
+/* ============================
+   Styles moved from index.html inline
+   ============================ */
+
+/* Progress text overlay positioning */
+.progress {
+    position: relative;
+}
+
+.progress-text {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 1.75rem;
+    color: white;
+    font-size: 0.85rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    z-index: 1;
+}
+
+/* Collapsible section headers */
+.section-header {
+    background-color: #2d2d2d;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.section-header .btn-link {
+    color: white;
+    text-decoration: none;
+    width: 100%;
+    text-align: left;
+    padding: 0;
+}
+
+.section-header .btn-link:hover {
+    color: #cccccc;
+}
+
+/* Active deck section */
+#activeDeckSection {
+    margin-top: 1rem;
+}
+
+/* Tighter spacing between card elements on mobile */
+@media (max-width: 768px) {
+    #activeDeckSection {
+        margin-top: 0.5rem;
+    }
+
+    #activeDeckSection #deckProgress {
+        margin-bottom: 0.5rem;
+    }
+
+    #activeDeckSection #cardActionSection {
+        margin-top: 1rem;
+    }
+}
+
+/* Campaign modal items */
+.campaign-item {
+    background-color: #2d2d2d;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.campaign-item:hover {
+    background-color: #3d3d3d;
+    text-decoration: none;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.campaign-item h4 {
+    margin-bottom: 0.5rem;
+}
+
+.campaign-item small {
+    display: block;
+}
+
+/* Modal styling */
+.modal .close {
+    opacity: 0.8;
+}
+
+.modal .close:hover {
+    opacity: 1;
+}
+
+.modal-content {
+    border: 1px solid #444;
+}
+
+.modal-header {
+    border-bottom: 1px solid #444;
+}
+
+/* Campaign icon animation */
+.fa-scroll {
+    transition: transform 0.2s ease;
+}
+
+.faq-icon:hover .fa-scroll {
+    transform: scale(1.1);
+}
+
+/* Touch behavior improvements */
+body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile responsive - progress text */
+@media (max-width: 576px) {
+    .progress-text {
+        font-size: 0.875rem;
+    }
+
+    .section-header {
+        padding: 1rem;
+    }
+
+    .section-header .btn-link {
+        padding: 15px 0;
+    }
+
+    /* Keep navigation buttons horizontal on all mobile sizes */
+}
+
+/* =========================================
+   Premium Section Headers - Stone Slate Style
+   ========================================= */
+
+/* Section Header Container */
+.section-header {
+    margin-bottom: 0.5rem;
+}
+
+/* Section Header Button - Stone Plate Style */
+.section-header .btn-link,
+.section-header button.btn-link {
+    background: linear-gradient(135deg, rgba(40, 40, 40, 0.7), rgba(15, 15, 15, 0.45));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 4px;
+
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.6),
+        0 3px 6px rgba(0, 0, 0, 0.4);
+
+    padding: 1.25rem 1.5rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.section-header .btn-link::before,
+.section-header button.btn-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--glass-noise);
+    background-size: 140px 140px;
+    opacity: 0.12;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+.section-header .btn-link h3,
+.section-header button.btn-link h3,
+.section-header .btn-link h4,
+.section-header button.btn-link h4 {
+    color: var(--maladum-gold);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+    margin: 0;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+.section-header .btn-link h3 i,
+.section-header button.btn-link h3 i {
+    color: var(--maladum-gold);
+    transition: transform 0.3s ease;
+}
+
+.section-header .btn-link:not(.collapsed) h3 i,
+.section-header button.btn-link:not(.collapsed) h3 i {
+    transform: rotate(180deg);
+}
+
+.section-header .btn-link:hover,
+.section-header button.btn-link:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(201, 162, 39, 0.15);
+    filter: brightness(1.35);
+    text-decoration: none;
+}
+
+.section-header .btn-link:focus,
+.section-header button.btn-link:focus {
+    outline: none;
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.6),
+        0 0 0 3px rgba(201, 162, 39, 0.3);
+}
+
+/* =========================================
+   Generate Deck Button - Premium Stone Style
+   ========================================= */
+
+#generateDeck,
+.rune-btn {
+    background-image: url('logos/stone-button.png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #1a1a1a;
+
+    border: none;
+    border-radius: 4px;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.7),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+
+    color: var(--maladum-gold);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1rem;
+    font-weight: 600;
+
+    padding: 1.25rem 2rem;
+    min-height: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+#generateDeck:hover:not(:disabled),
+.rune-btn:hover:not(:disabled) {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.6),
+        0 0 25px rgba(201, 162, 39, 0.2);
+    filter: brightness(1.15);
+}
+
+#generateDeck:active:not(:disabled),
+.rune-btn:active:not(:disabled) {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(201, 162, 39, 0.2);
+}
+
+#generateDeck:disabled,
+.rune-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+    pointer-events: none;
+    filter: saturate(0.65) brightness(0.82);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.45),
+        0 0 8px rgba(0, 0, 0, 0.12);
+}
+
+#generateDeck i,
+.rune-btn i {
+    color: var(--maladum-gold);
+}
+
+/* Primary variant with subtle gold glow */
+.rune-btn.primary {
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.7),
+        0 0 15px rgba(201, 162, 39, 0.15);
+}
+
+.rune-btn.primary:hover:not(:disabled) {
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(201, 162, 39, 0.3);
+}
+
+/* =========================================
+   Premium Action Grid Styles (Reference Match)
+   ========================================= */
+
+/* Main Container - Glassmorphism with Blue/Purple Tint */
+#cardActionSection {
+    background: linear-gradient(160deg,
+            rgba(25, 30, 45, 0.85) 0%,
+            rgba(35, 25, 55, 0.75) 50%,
+            rgba(45, 30, 70, 0.65) 100%) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(132, 169, 255, 0.2);
+    box-shadow:
+        0 12px 40px 0 rgba(0, 0, 0, 0.7),
+        0 0 60px rgba(100, 80, 180, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-top: 2rem;
+    position: relative;
+    overflow: visible;
+}
+
+/* Subtle ambient glow */
+#cardActionSection::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -30%;
+    width: 160%;
+    height: 160%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(120, 100, 200, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(180, 120, 200, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure content is above the background effects */
+#cardActionSection>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* Section Title Enhancement */
+#cardActionSection h4 {
+    font-family: 'Cinzel', serif;
+    color: var(--maladum-gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Action Grid Layout */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 0.5rem;
+}
+
+/* Action Button Styling - Premium Stone Plate */
+.action-card-btn {
+    background-image: url('logos/stone-button.png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #1a1a1a;
+
+    /* Subtle border to complement the image */
+    border: none;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.7),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+
+    border-radius: 4px;
+    color: var(--maladum-gold);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    overflow: visible;
+}
+
+/* Hover Effects */
+.action-card-btn:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(201, 162, 39, 0.25),
+        0 0 60px rgba(201, 162, 39, 0.1);
+    filter: brightness(1.15);
+}
+
+/* Active/Click Effects */
+.action-card-btn:active {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(201, 162, 39, 0.2);
+}
+
+/* Icon Styling - Custom heraldic badges */
+.action-card-icon {
+    width: 82px;
+    height: 82px;
+    margin-bottom: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: #e2b847;
+    transition: transform 0.35s ease, color 0.35s ease, filter 0.35s ease;
+    z-index: 2;
+}
+
+.action-card-icon::before,
+.action-card-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(18% 0, 82% 0, 100% 18%, 100% 82%, 82% 100%, 18% 100%, 0 82%, 0 18%);
+    pointer-events: none;
+}
+
+.action-card-icon::before {
+    background:
+        radial-gradient(circle at 30% 25%, rgba(255, 233, 152, 0.26), rgba(109, 73, 11, 0.14) 48%, rgba(0, 0, 0, 0.32) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 240, 184, 0.25),
+        inset 0 -10px 14px rgba(0, 0, 0, 0.45),
+        0 10px 18px rgba(0, 0, 0, 0.45);
+    opacity: 0.95;
+}
+
+.action-card-icon::after {
+    inset: 3px;
+    border: 1px solid rgba(241, 202, 92, 0.32);
+    box-shadow:
+        inset 0 0 0 1px rgba(53, 34, 4, 0.55),
+        0 0 16px rgba(201, 162, 39, 0.12);
+}
+
+.action-card-icon svg {
+    width: 58px;
+    height: 58px;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    filter:
+        drop-shadow(0 3px 5px rgba(0, 0, 0, 0.8))
+        drop-shadow(0 0 8px rgba(255, 217, 96, 0.14));
+}
+
+.action-card-icon .icon-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.action-card-icon .icon-fill {
+    fill: currentColor;
+}
+
+.action-card-btn:hover .action-card-icon {
+    color: #f5d577;
+    transform: translateY(-2px) scale(1.06);
+    filter: drop-shadow(0 0 14px rgba(242, 203, 90, 0.18));
+}
+
+.action-card-btn:hover .action-card-icon::before {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 240, 184, 0.34),
+        inset 0 -10px 14px rgba(0, 0, 0, 0.4),
+        0 10px 22px rgba(0, 0, 0, 0.4);
+}
+
+/* Text Styling - Bolder Gold */
+.action-card-label {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    white-space: normal;
+    background: linear-gradient(180deg,
+            #fff8dc 0%,
+            #d4af37 50%,
+            #b8860b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 1));
+    position: relative;
+    z-index: 2;
+}
+
+.action-card-btn:hover .action-card-label {
+    background: linear-gradient(180deg,
+            #fffacd 0%,
+            #ffd700 50%,
+            #daa520 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Responsive Grid for Mobile */
+@media (max-width: 576px) {
+    #cardActionSection {
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+    }
+
+    .action-grid {
+        gap: 0.875rem;
+    }
+
+    .action-card-btn {
+        min-height: 110px;
+        padding: 1.25rem 0.75rem;
+    }
+
+    .action-card-btn::before,
+    .action-card-btn::after {
+        font-size: 0.75rem;
+    }
+
+    .action-card-icon {
+        width: 66px;
+        height: 66px;
+        margin-bottom: 0.6rem;
+    }
+
+    .action-card-icon svg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .action-card-label {
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 380px) {
+    .action-card-btn {
+        min-height: 95px;
+        padding: 1rem 0.5rem;
+    }
+
+    .action-card-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .action-card-icon svg {
+        width: 42px;
+        height: 42px;
+    }
+
+    .action-card-label {
+        font-size: 0.85rem;
+    }
+
+    .card-search-item {
+        grid-template-columns: 84px 1fr;
+    }
+
+    .card-search-thumb {
+        width: 84px;
+    }
+}
+
+/* Card search */
+.card-search-results {
+    display: grid;
+    gap: 12px;
+}
+
+.card-search-item {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card-search-item:hover,
+.card-search-item:focus-visible {
+    border-color: rgba(230, 200, 120, 0.6);
+    box-shadow: 0 0 0 2px rgba(230, 200, 120, 0.2), 0 8px 18px rgba(0, 0, 0, 0.4);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.card-search-thumb {
+    width: 112px;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+.card-search-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-search-type {
+    font-size: 0.85rem;
+}
+
+.card-surface {
+    position: relative;
+    width: 100%;
+}
+
+.card-surface--full {
+    max-width: 320px;
+}
+
+.card-surface--compact {
+    max-width: 112px;
+}
+
+.card-image-fallback {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.5),
+        0 0 18px rgba(197, 165, 114, 0.1);
+}
+
+.card-surface--rich {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(94, 63, 24, 0.26);
+    background:
+        radial-gradient(circle at top, rgba(255, 250, 235, 0.9), rgba(236, 223, 191, 0.88) 62%, rgba(198, 177, 135, 0.82)),
+        linear-gradient(180deg, rgba(63, 39, 17, 0.18), rgba(255, 255, 255, 0));
+    color: #271b0d;
+    box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.card-surface--rich.card-surface--compact {
+    gap: 0.55rem;
+    padding: 0.65rem 0.6rem;
+    border-radius: 14px;
+}
+
+.card-surface__title {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 1.55rem;
+    letter-spacing: 0.08rem;
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+    color: #28344d;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.card-surface--compact .card-surface__title {
+    font-size: 0.72rem;
+    letter-spacing: 0.03rem;
+    line-height: 1.15;
+}
+
+.card-surface__meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.card-surface--compact .card-surface__meta,
+.card-surface--compact .card-surface__sections {
+    display: none;
+}
+
+.card-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(40, 33, 24, 0.12);
+    border: 1px solid rgba(40, 33, 24, 0.16);
+    color: #43311d;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.card-meta-pill--muted {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.card-surface__sections {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.card-section {
+    padding: 0.7rem 0.8rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.38);
+    border: 1px solid rgba(70, 46, 21, 0.1);
+}
+
+.card-surface--compact .card-section {
+    padding: 0.35rem 0.4rem;
+    border-radius: 8px;
+}
+
+.card-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(55, 38, 18, 0.16);
+}
+
+.card-section__label {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.06rem;
+    color: #374865;
+    text-transform: uppercase;
+}
+
+.card-surface--compact .card-section__label {
+    font-size: 0.45rem;
+    letter-spacing: 0.02rem;
+}
+
+.card-section__threshold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.7rem;
+    min-height: 1.7rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: rgba(47, 50, 61, 0.14);
+    border: 1px solid rgba(47, 50, 61, 0.2);
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #2d3649;
+}
+
+.card-surface--compact .card-section__threshold {
+    min-width: 1rem;
+    min-height: 1rem;
+    font-size: 0.48rem;
+}
+
+.card-section__body {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.card-section__text {
+    margin: 0;
+    color: #291e13;
+    line-height: 1.45;
+    font-size: 0.95rem;
+}
+
+.card-surface--compact .card-section__text {
+    font-size: 0.48rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    overflow: hidden;
+}
+
+.card-surface__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.card-footer-side {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    min-height: 2rem;
+}
+
+.card-footer-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+    text-transform: uppercase;
+    color: #43311d;
+}
+
+.card-footer-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: 0.18rem;
+    border-radius: 10px;
+    background: rgba(62, 44, 21, 0.12);
+    border: 1px solid rgba(62, 44, 21, 0.15);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.card-footer-icon .card-inline-token {
+    margin: 0;
+    gap: 0;
+}
+
+.card-footer-icon .card-inline-token__icon {
+    width: 1.55rem;
+    height: 1.55rem;
+}
+
+.card-footer-icon .card-inline-token__value {
+    display: none;
+}
+
+.card-inline-token {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.16rem;
+    vertical-align: baseline;
+    margin: 0 0.06rem;
+}
+
+.card-inline-token__icon {
+    width: 1.05em;
+    height: 1.05em;
+    object-fit: contain;
+}
+
+.card-inline-token__value {
+    font-size: 0.82em;
+    font-weight: 700;
+}
+
+.card-inline-token--unknown {
+    padding: 0 0.18rem;
+    border-radius: 999px;
+    background: rgba(112, 26, 26, 0.14);
+    color: #6b1a1a;
+    font-size: 0.82em;
+}
+
+.card-surface--compact .card-surface__footer {
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.card-surface--compact .card-footer-side {
+    justify-content: center;
+    min-height: 0;
+    gap: 0.3rem;
+}
+
+.card-surface--compact .card-footer-label {
+    display: none;
+}
+
+.card-surface--compact .card-footer-icon {
+    min-width: 1.55rem;
+    min-height: 1.55rem;
+    padding: 0.14rem;
+    border-radius: 8px;
+}
+
+.card-surface--compact .card-footer-icon .card-inline-token__icon {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.card-preview-surface {
+    max-width: min(100%, 420px);
+    margin: 0 auto;
+}
+
+.card-preview-surface .card-surface--full {
+    max-width: 420px;
+}
+
+.card-search-thumb {
+    width: 112px;
+}
+
+.card-search-thumb .card-surface--compact {
+    max-width: 112px;
+}
+
+.card-extraction {
+    justify-self: center;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+    text-transform: uppercase;
+}
+
+.card-extraction--auto {
+    background: rgba(40, 116, 72, 0.14);
+    color: #2b7a4b;
+}
+
+.card-extraction--needs-review {
+    background: rgba(138, 92, 20, 0.14);
+    color: #7d5312;
+}
+
+.card-extraction--verified {
+    background: rgba(27, 74, 139, 0.14);
+    color: #245497;
+}
+
+.card-preview-actions .input-group {
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+/* Touch target: clear in-play cards button */
+@media (max-width: 768px) {
+    #clearInPlayCards {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 16px;
+    }
+}
+
+/* =========================================
+   Deck Flow Sprint: Build / Play separation
+   ========================================= */
+
+input:focus,
+select:focus,
+button:focus,
+.btn:focus,
+.form-control:focus {
+    outline: none;
+    border-color: rgba(197, 165, 114, 0.75) !important;
+    box-shadow: 0 0 0 3px rgba(79, 122, 58, 0.28) !important;
+}
+
+.deck-experience {
+    display: grid;
+    gap: 1rem;
+}
+
+.deck-experience > * {
+    min-width: 0;
+}
+
+#deckModeHeader {
+    order: 1;
+}
+
+#deckUtilityDrawer {
+    order: 2;
+}
+
+#activeDeckSection {
+    order: 3;
+}
+
+.deck-mode-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(197, 165, 114, 0.18);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(18, 18, 18, 0.78), rgba(9, 9, 9, 0.56));
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.34);
+}
+
+.deck-mode-copy {
+    min-width: 0;
+}
+
+.deck-mode-eyebrow,
+.deck-summary-mode,
+.deck-utility-kicker {
+    margin: 0 0 0.4rem;
+    color: rgba(197, 165, 114, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.24rem;
+    font-size: 0.8rem;
+}
+
+.deck-mode-title,
+.deck-utility-title,
+.deck-summary-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-family: 'Cinzel', serif;
+}
+
+.deck-summary-games {
+    margin: 0.55rem 0 0;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+.deck-mode-title {
+    font-size: 1.1rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+#deckExperience[data-mode="play"] .deck-mode-header {
+    padding: 0.8rem 0.95rem;
+}
+
+.deck-mode-tabs {
+    display: inline-flex;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mode-tab {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    min-width: 96px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.mode-tab:hover:not(:disabled) {
+    transform: translateY(-1px);
+    color: var(--text-primary);
+}
+
+.mode-tab.is-active {
+    color: var(--maladum-gold);
+    background: rgba(92, 22, 22, 0.45);
+    border-color: rgba(197, 165, 114, 0.26);
+}
+
+.mode-tab:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.deck-utility-drawer {
+    padding: 1rem;
+    border-radius: 18px;
+    background: rgba(8, 8, 8, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.deck-utility-drawer.is-collapsed {
+    background: rgba(8, 8, 8, 0.28);
+    border-color: rgba(197, 165, 114, 0.12);
+}
+
+#deckUtilityDrawerBody[hidden] {
+    display: none !important;
+}
+
+.deck-utility-header,
+.deck-summary-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.deck-utility-title {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.deck-utility-drawer #deckBuilderControls {
+    margin-top: 1rem;
+}
+
+#deckExperience[data-mode="play"] #activeDeckSection {
+    order: 2;
+}
+
+#deckExperience[data-mode="play"] #deckUtilityDrawer {
+    order: 3;
+}
+
+#deckExperience[data-mode="play"] #deckUtilityDrawer.is-collapsed {
+    padding: 0.8rem 0.95rem;
+    background: rgba(7, 7, 7, 0.22);
+}
+
+#deckExperience[data-mode="play"] #deckUtilityDrawer.is-collapsed .deck-utility-title {
+    font-size: 1rem;
+}
+
+.deck-utility-drawer .section-header .btn-link,
+.deck-utility-drawer .section-header button.btn-link {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.72), rgba(14, 14, 14, 0.62));
+    border: 1px solid rgba(197, 165, 114, 0.14);
+}
+
+#scenarioConfig,
+#gameCheckboxes,
+.card-type-input,
+.card-search-item {
+    background: rgba(11, 11, 11, 0.54);
+}
+
+#deckExperience[data-mode="build"] #activeDeckSection {
+    opacity: 0.86;
+}
+
+#deckExperience[data-mode="build"] #deckSummaryBar {
+    top: 0.5rem;
+}
+
+#deckSummaryBar {
+    position: sticky;
+    top: 1rem;
+    scroll-margin-top: 6rem;
+    z-index: 4;
+    margin-bottom: 1rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(19, 19, 19, 0.92), rgba(28, 12, 12, 0.78));
+    border: 1px solid rgba(197, 165, 114, 0.18);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.34);
+}
+
+.deck-summary-copy {
+    min-width: 0;
+}
+
+.deck-summary-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.deck-summary-title {
+    font-size: 1.5rem;
+}
+
+.deck-summary-games {
+    font-size: 0.95rem;
+}
+
+.deck-summary-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+.summary-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.4rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    font-size: 0.92rem;
+}
+
+.summary-chip--rule {
+    background: rgba(92, 22, 22, 0.42);
+    border-color: rgba(197, 165, 114, 0.2);
+    color: var(--maladum-gold);
+}
+
+.deck-card-state {
+    display: grid;
+    justify-items: center;
+    gap: 0.85rem;
+}
+
+#deckOutput .deck-display-root[data-deck-surface="true"] {
+    cursor: pointer;
+}
+
+#deckOutput .deck-display-root .card-surface--full,
+#deckOutput .deck-display-root[data-deck-state="ready"] .deck-card-state {
+    max-width: min(100%, 360px);
+}
+
+#deckExperience[data-mode="play"] #deckOutput {
+    min-height: 32rem;
+}
+
+.deck-card-caption {
+    margin: 0;
+    color: var(--maladum-gold);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+#navigationButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr minmax(220px, 1.35fr);
+    gap: 0.9rem;
+    align-items: stretch;
+}
+
+#navigationButtons .rune-btn {
+    width: 100%;
+}
+
+.rune-btn.small {
+    min-height: 48px;
+    padding: 0.85rem 1.15rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.12rem;
+}
+
+.rune-btn.secondary,
+.rune-btn.tertiary {
+    filter: saturate(0.72) brightness(0.94);
+}
+
+.rune-btn.tertiary {
+    opacity: 0.86;
+}
+
+.rune-btn.next-draw {
+    min-height: 72px;
+    font-size: 1.05rem;
+}
+
+#cardActionSection {
+    background: linear-gradient(180deg, rgba(19, 19, 19, 0.88), rgba(10, 10, 10, 0.75)) !important;
+    border: 1px solid rgba(197, 165, 114, 0.14);
+    box-shadow:
+        0 16px 32px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+#cardActionSection::before {
+    background: radial-gradient(ellipse at 30% 20%, rgba(197, 165, 114, 0.08) 0%, transparent 52%);
+}
+
+.card-preview-direct-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.card-preview-direct-actions .btn {
+    min-width: 140px;
+}
+
+#inPlaySection {
+    background: rgba(14, 14, 14, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.in-play-card__preview {
+    max-width: 180px;
+    margin-bottom: 0.8rem;
+}
+
+@media (max-width: 992px) {
+    .deck-mode-header,
+    .deck-utility-header,
+    .deck-summary-main {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .deck-mode-tabs {
+        width: 100%;
+    }
+
+    .mode-tab {
+        flex: 1 1 0;
+    }
+
+    .deck-summary-actions {
+        width: 100%;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .deck-mode-header,
+    .deck-utility-drawer,
+    #deckSummaryBar {
+        padding: 0.85rem 0.9rem;
+    }
+
+    #navigationButtons {
+        grid-template-columns: 1fr;
+    }
+
+    .rune-btn.next-draw {
+        order: -1;
+    }
+
+    .deck-summary-title {
+        font-size: 1.25rem;
+    }
+}

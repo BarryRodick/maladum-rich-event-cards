@@ -1,6 +1,6 @@
 {
   "name": "maladum-rich-event-cards",
-  "version": "2.15.3",
+  "version": "2.15.4",
   "scripts": {
     "test": "node tests/parseCardTypes.test.js && node tests/deckGeneration.test.js && node tests/cardCatalogIndex.test.js && node tests/deckLifecycle.test.js && node tests/deckManagerGeneration.test.js && node tests/cardActions.test.js && node tests/playSnapshot.test.js && node tests/campaignTracker.test.js && node tests/storageUtils.test.js && node tests/initialization.test.js && node tests/deckDisplay.test.js && node tests/deckClickGuard.test.js && node tests/deckFlowUtils.test.js && node tests/uiManager.test.js && node tests/versionSync.test.js && node tests/appShellAssets.test.js && node tests/updateUtils.test.js && node tests/cardSchema.test.js && node tests/cardNormalization.test.js && node tests/cardTokenizer.test.js && node tests/cardRenderer.test.js && node tests/cardCatalogCoverage.test.js && node tests/cardSearch.test.js && node tests/cardExtraction.test.js",
     "test:cards": "node tests/parseCardTypes.test.js",

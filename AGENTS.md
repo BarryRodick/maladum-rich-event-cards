@@ -56,3 +56,13 @@ initialization.js  (app entry — fetches JSON data, restores saved state, regis
 - 4-space indentation, UTF-8, LF line endings (see `.editorconfig`)
 - JSON files use 2-space indentation
 - ES module imports/exports (no CommonJS in browser code; tests and scripts use CommonJS)
+
+## Barry Operating Rules
+
+- Repo-specific instructions in this file take precedence over these shared operating rules when they conflict.
+- Start by checking `git status` and preserving unrelated user changes.
+- Identify objective, expected deliverable, and verification standard before editing.
+- Keep a concise live plan for multi-step work.
+- Every Codex session ends as committed, tasked, documented, or discarded.
+- Finish with a handoff summary covering changed files, decisions, checks run, checks not run, blockers, next actions, OpenBrain candidates, PKM/repo-doc candidates, and local-only noise.
+- Keep OpenBrain writes manual or approval-gated; never sync raw transcripts, secrets, generated output, cache/build/test artifacts, or unreviewed drafts.

@@ -49,6 +49,13 @@ htmlFiles.forEach(file => {
     assert(!html.includes('https://cdn.jsdelivr.net/'), `${file} should not depend on jsDelivr runtime assets`);
     assert(!html.includes('https://cdnjs.cloudflare.com/'), `${file} should not depend on cdnjs runtime assets`);
     assert(!html.includes('https://fonts.googleapis.com/'), `${file} should not depend on Google Fonts at runtime`);
+
+    if (file === 'dungeons_of_enveron.html') {
+        assert(html.includes("key: 'achievementTrack'"),
+            'Dungeons tracker should configure achievement checkbox persistence');
+        assert(html.includes("selector: '.achievements .checkbox'"),
+            'Dungeons tracker should bind achievement checkbox markers');
+    }
 });
 
 const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, 'manifest.json'), 'utf8'));

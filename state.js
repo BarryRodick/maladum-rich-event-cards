@@ -38,6 +38,7 @@ export const state = {
     cardMap: new Map(),
     deckDataByType: {},
     availableCards: [],
+    cardCatalogIndex: null,
     iconRegistry: {},
     cardManifest: null,
 

@@ -5,11 +5,16 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
 
-function loadCardActions(state, overrides = {}) {
+async function loadModule(relativePath) {
+    return import(pathToFileURL(path.join(__dirname, '..', relativePath)).href);
+}
+
+function loadCardActions(state, overrides = {}, lifecycle = {}) {
     const file = path.join(__dirname, '..', 'card-actions.js');
     let code = fs.readFileSync(file, 'utf8');
-    code = code.replace(/import .*?\r?\n/g, '');
+    code = code.replace(/import[\s\S]*?;\r?\n/g, '');
     code = code.replace(/export const cardActions\s*=\s*/, 'const cardActions = ');
     code = code.replace(/export function /g, 'function ');
 
@@ -30,6 +35,11 @@ function loadCardActions(state, overrides = {}) {
         'saveConfiguration',
         'showCurrentCard',
         'updateProgressBar',
+        'insertSpecificCardState',
+        'markCardInPlayState',
+        'removeCardFromPlayState',
+        'runDeckAction',
+        'shuffleCardIntoTopNState',
         `${code}; return { cardActions, shuffleCardIntoTopN, insertSpecificCardById };`
     );
 
@@ -41,11 +51,19 @@ function loadCardActions(state, overrides = {}) {
         trackEvent,
         saveConfiguration,
         showCurrentCard,
-        updateProgressBar
+        updateProgressBar,
+        lifecycle.insertSpecificCardState,
+        lifecycle.markCardInPlayState,
+        lifecycle.removeCardFromPlayState,
+        lifecycle.runDeckAction,
+        lifecycle.shuffleCardIntoTopNState
     );
 }
 
 console.log('Testing card actions...');
+
+(async () => {
+const lifecycle = await loadModule('deck-lifecycle.mjs');
 
 // ============================
 // Test: shuffleTopN advances the active slot
@@ -62,7 +80,7 @@ console.log('Testing card actions...');
         currentIndex: 1,
         cards: { selected: new Map() }
     };
-    const { cardActions } = loadCardActions(state);
+    const { cardActions } = loadCardActions(state, {}, lifecycle);
 
     const originalRandom = Math.random;
     Math.random = () => 0;
@@ -89,7 +107,7 @@ console.log('Testing card actions...');
         currentIndex: 0,
         cards: { selected: new Map() }
     };
-    const { cardActions } = loadCardActions(state);
+    const { cardActions } = loadCardActions(state, {}, lifecycle);
     const result = cardActions.shuffleTopN(state.currentDeck[0], 3);
     assert.strictEqual(result, 'No remaining cards to shuffle into.');
     assert.strictEqual(state.currentDeck.length, 1);
@@ -114,7 +132,7 @@ console.log('Testing card actions...');
     };
     const { shuffleCardIntoTopN } = loadCardActions(state, {
         showToast: (message) => toasts.push(message)
-    });
+    }, lifecycle);
 
     shuffleCardIntoTopN(1, 3);
 
@@ -138,7 +156,7 @@ console.log('Testing card actions...');
         currentIndex: 0,
         cards: { selected: new Map() }
     };
-    const { cardActions } = loadCardActions(state);
+    const { cardActions } = loadCardActions(state, {}, lifecycle);
     const originalRandom = Math.random;
     Math.random = () => 0;
     cardActions.shuffleAnywhere(state.currentDeck[0]);
@@ -161,7 +179,7 @@ console.log('Testing card actions...');
         },
         cards: { selected: new Map([[1, true]]) }
     };
-    const { cardActions } = loadCardActions(state);
+    const { cardActions } = loadCardActions(state, {}, lifecycle);
 
     const duplicateResult = cardActions.insertCardType(state.currentDeck[0], {
         cardType: 'Denizen',
@@ -202,7 +220,7 @@ console.log('Testing card actions...');
     };
     const { insertSpecificCardById } = loadCardActions(state, {
         showToast: (message) => toasts.push(message)
-    });
+    }, lifecycle);
 
     insertSpecificCardById(3, 'next');
     insertSpecificCardById(4, 'bottom');
@@ -217,3 +235,7 @@ console.log('Testing card actions...');
 }
 
 console.log('All card action tests passed!');
+})().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+});

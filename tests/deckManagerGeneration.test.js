@@ -5,6 +5,11 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
+
+async function loadModule(relativePath) {
+    return import(pathToFileURL(path.join(__dirname, '..', relativePath)).href);
+}
 
 function slugify(text) {
     return text.toLowerCase()
@@ -98,7 +103,7 @@ function buildDeckDataByType(cards) {
     return byType;
 }
 
-function loadDeckManager(state, document, toasts = []) {
+function loadDeckManager(state, document, toasts = [], lifecycle = {}) {
     const file = path.join(__dirname, '..', 'deck-manager.js');
     let code = fs.readFileSync(file, 'utf8');
     code = code.replace(/import .*?\r?\n/g, '');
@@ -117,6 +122,8 @@ function loadDeckManager(state, document, toasts = []) {
         'renderDeckSummary',
         'setDeckMode',
         'renderCardNode',
+        'advanceDeckState',
+        'generateDeckState',
         'document',
         `${code}; return { generateDeck };`
     );
@@ -134,6 +141,8 @@ function loadDeckManager(state, document, toasts = []) {
         () => { },
         () => { },
         () => createNode(),
+        lifecycle.advanceDeckState,
+        lifecycle.generateDeckState,
         document
     );
 }
@@ -175,6 +184,9 @@ function createBaseState(cards, allCardTypes, overrides = {}) {
 
 console.log('Testing deck-manager generation regressions...');
 
+(async () => {
+const lifecycle = await loadModule('deck-lifecycle.mjs');
+
 {
     const cards = [
         { id: 1, card: 'Dungeon A', type: 'Dungeon' },
@@ -187,7 +199,7 @@ console.log('Testing deck-manager generation regressions...');
         }
     });
     const document = createDocument({ Dungeon: 1, Novice: 1, Veteran: 1 });
-    const { generateDeck } = loadDeckManager(state, document);
+    const { generateDeck } = loadDeckManager(state, document, [], lifecycle);
 
     generateDeck();
 
@@ -213,7 +225,7 @@ console.log('Testing deck-manager generation regressions...');
         }
     });
     const document = createDocument({ Dungeon: 1, Novice: 1, Veteran: 1 });
-    const { generateDeck } = loadDeckManager(state, document);
+    const { generateDeck } = loadDeckManager(state, document, [], lifecycle);
 
     generateDeck();
 
@@ -243,7 +255,7 @@ console.log('Testing deck-manager generation regressions...');
         }
     });
     const document = createDocument({ Dungeon: 5, Corrupter: 0 });
-    const { generateDeck } = loadDeckManager(state, document);
+    const { generateDeck } = loadDeckManager(state, document, [], lifecycle);
 
     generateDeck();
 
@@ -273,7 +285,7 @@ console.log('Testing deck-manager generation regressions...');
         }
     });
     const document = createDocument({ Dungeon: 5, Corrupter: 5 });
-    const { generateDeck } = loadDeckManager(state, document);
+    const { generateDeck } = loadDeckManager(state, document, [], lifecycle);
 
     generateDeck();
 
@@ -287,3 +299,7 @@ console.log('Testing deck-manager generation regressions...');
 }
 
 console.log('All deck-manager generation regression tests passed!');
+})().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+});

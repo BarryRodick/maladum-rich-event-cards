@@ -15,6 +15,7 @@ import { saveConfiguration } from './config-manager.js';
 import { setupManualUpdateCheck } from './update-utils.js';
 import { updateCardSearchResults, showCardPreview, setDeckMode, toggleUtilityDrawer, openBuildTools, openSearchTools, renderDeckSummary } from './ui-manager.js';
 import { buildPreviewActionRequest } from './deck-flow-utils.js';
+import { clearInPlayCardsState, rewindActiveCardState } from './deck-lifecycle.mjs';
 
 const debouncedSaveConfiguration = debounce(saveConfiguration, 400);
 const debouncedCardSearch = debounce((value) => updateCardSearchResults(value), 150);
@@ -28,15 +29,7 @@ function shouldAdvanceDeckFromClick(target) {
 }
 
 function rewindActiveCardForClear() {
-    if (state.currentIndex > 0) {
-        state.currentIndex--;
-        if (state.discardPile.length > 0) {
-            state.discardPile.pop();
-        }
-        return;
-    }
-
-    state.currentIndex = -1;
+    rewindActiveCardState(state);
 }
 
 export function setupEventListeners() {
@@ -201,7 +194,7 @@ export function setupEventListeners() {
     const clearInPlayBtn = document.getElementById('clearInPlayCards');
     if (clearInPlayBtn) {
         clearInPlayBtn.addEventListener('click', () => {
-            state.inPlayCards = [];
+            clearInPlayCardsState(state);
             updateInPlayCardsDisplay();
             debouncedSaveConfiguration();
             trackEvent('Card Status', 'Clear In Play', null);

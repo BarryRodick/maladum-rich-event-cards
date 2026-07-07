@@ -5,8 +5,13 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
 
-function loadRestoreDeckState(state, document, hooks = {}) {
+async function loadModule(relativePath) {
+    return import(pathToFileURL(path.join(__dirname, '..', relativePath)).href);
+}
+
+function loadRestoreDeckState(state, document, hooks = {}, snapshot = {}) {
     const file = path.join(__dirname, '..', 'initialization.js');
     const code = fs.readFileSync(file, 'utf8');
     const match = code.match(/function restoreDeckState\(deckState\) \{[\s\S]*?\n\}/);
@@ -17,6 +22,7 @@ function loadRestoreDeckState(state, document, hooks = {}) {
         'showCurrentCard',
         'updateProgressBar',
         'updateInPlayCardsDisplay',
+        'restoreDeckStateFromSnapshot',
         'document',
         `${match[0]}; return restoreDeckState;`
     )(
@@ -24,11 +30,15 @@ function loadRestoreDeckState(state, document, hooks = {}) {
         hooks.showCurrentCard || (() => { }),
         hooks.updateProgressBar || (() => { }),
         hooks.updateInPlayCardsDisplay || (() => { }),
+        snapshot.restoreDeckStateFromSnapshot,
         document
     );
 }
 
 console.log('Testing initialization helpers...');
+
+(async () => {
+const snapshot = await loadModule('play-snapshot.mjs');
 
 {
     const elements = {
@@ -83,7 +93,7 @@ console.log('Testing initialization helpers...');
         },
         updateProgressBar: () => { updateProgressBarCalls++; },
         updateInPlayCardsDisplay: () => { updateInPlayCardsDisplayCalls++; }
-    });
+    }, snapshot);
 
     restoreDeckState({
         currentDeck: [{ id: 101, card: 'Restored Card', renderMode: 'image', sourceImage: 'Restored_Card.png' }],
@@ -178,7 +188,7 @@ console.log('Testing initialization helpers...');
         showCurrentCard: () => { },
         updateProgressBar: () => { },
         updateInPlayCardsDisplay: () => { }
-    });
+    }, snapshot);
 
     try {
         restoreDeckState({
@@ -209,3 +219,7 @@ console.log('Testing initialization helpers...');
 }
 
 console.log('All initialization helper tests passed!');
+})().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+});

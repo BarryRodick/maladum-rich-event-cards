@@ -4,6 +4,7 @@
 import { state, CONFIG, cardTypeId } from './state.js';
 import { saveState, loadState, isStorageAvailable } from './storage-utils.js';
 import { trackEvent } from './app-utils.js';
+import { buildPlaySnapshot, restoreBasicConfigFromSnapshot } from './play-snapshot.mjs';
 
 /**
  * Saves the current application configuration and deck state to local storage
@@ -15,25 +16,8 @@ export function saveConfiguration() {
     }
 
     try {
-        const config = {
-            selectedGames: state.selectedGames,
-            cardCounts: {},
-            specialCardCounts: {},
-            enableSentryRules: state.enableSentryRules,
-            enableCorrupterRules: state.enableCorrupterRules,
-            selectedDifficultyIndex: state.selectedDifficultyIndex,
-            deckState: {
-                currentDeck: state.currentDeck,
-                currentIndex: state.currentIndex,
-                discardPile: state.discardPile,
-                sentryDeck: state.sentryDeck,
-                initialDeckSize: state.initialDeckSize,
-                inPlayCards: state.inPlayCards,
-                mainDeck: state.deck.main,
-                specialDeck: state.deck.special,
-                combinedDeck: state.deck.combined
-            }
-        };
+        const cardCounts = {};
+        const specialCardCounts = {};
 
         // Gather card counts from the state/DOM
         state.allCardTypes.forEach(type => {
@@ -42,13 +26,14 @@ export function saveConfiguration() {
                 const count = parseInt(input.value) || 0;
                 if ((state.dataStore.sentryTypes.includes(type) && state.enableSentryRules) ||
                     (state.dataStore.corrupterTypes.includes(type) && state.enableCorrupterRules)) {
-                    config.specialCardCounts[type] = count;
+                    specialCardCounts[type] = count;
                 } else {
-                    config.cardCounts[type] = count;
+                    cardCounts[type] = count;
                 }
             }
         });
 
+        const config = buildPlaySnapshot(state, { cardCounts, specialCardCounts });
         saveState(CONFIG.storage.key, config);
 
         if (CONFIG.DEBUG) console.log('Game state saved:', {
@@ -75,15 +60,5 @@ export function loadSavedConfig() {
  * Restores the basic selection state (games, counts, rules) but not the deck itself
  */
 export function restoreBasicConfig(savedConfig) {
-    if (!savedConfig) return;
-
-    if (savedConfig.selectedGames) {
-        state.selectedGames = savedConfig.selectedGames;
-    }
-
-    state.enableSentryRules = savedConfig.enableSentryRules || false;
-    state.enableCorrupterRules = savedConfig.enableCorrupterRules || false;
-    state.selectedDifficultyIndex = savedConfig.selectedDifficultyIndex || 0;
-    state.cardCounts = savedConfig.cardCounts || {};
-    state.specialCardCounts = savedConfig.specialCardCounts || {};
+    restoreBasicConfigFromSnapshot(state, savedConfig);
 }

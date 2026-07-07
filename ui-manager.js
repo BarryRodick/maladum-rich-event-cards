@@ -2,12 +2,12 @@
  * ui-manager.js - Handles UI generation and DOM updates
  */
 import { state, slugify, cardTypeId } from './state.js';
-import { parseCardTypes } from './card-utils.js';
 import { debounce } from './app-utils.js';
 import { saveConfiguration } from './config-manager.js';
 import { deriveDeckMode, formatDeckSummary, getGenerateDeckState } from './deck-flow-utils.js';
 import { searchCards } from './card-data.mjs';
 import { renderCardNode, renderCompactCardNode } from './card-renderer.mjs';
+import { applyCardCatalogIndex, buildCardCatalogIndex } from './card-catalog-index.mjs';
 
 const debouncedSaveConfiguration = debounce(saveConfiguration, 400);
 
@@ -87,44 +87,20 @@ export function generateGameSelection(games) {
  * Loads and processes card types based on selected games
  */
 export function loadCardTypes() {
-    state.selectedGames = [];
+    const selectedGames = [];
     state.allGames.forEach(game => {
         const checkbox = document.getElementById(`game-${slugify(game)}`);
         if (checkbox && checkbox.checked) {
-            state.selectedGames.push(game);
+            selectedGames.push(game);
         }
     });
 
-    state.deckDataByType = {};
-    state.allCardTypes = [];
-    const uniqueTypes = new Set();
-    let allCards = [];
-
-    state.selectedGames.forEach(game => {
-        if (state.dataStore.games[game]) {
-            allCards = allCards.concat(state.dataStore.games[game]);
-        }
-    });
-
-    state.availableCards = [...allCards];
+    applyCardCatalogIndex(state, buildCardCatalogIndex(state.dataStore, selectedGames));
 
     const searchInput = document.getElementById('cardSearchInput');
     if (searchInput) {
         updateCardSearchResults(searchInput.value);
     }
-
-    allCards.forEach(card => {
-        const typeInfo = parseCardTypes(card.type);
-        typeInfo.allTypes.forEach(type => {
-            uniqueTypes.add(type);
-            if (!state.deckDataByType[type]) {
-                state.deckDataByType[type] = [];
-            }
-            state.deckDataByType[type].push({ ...card });
-        });
-    });
-
-    state.allCardTypes = Array.from(uniqueTypes).sort();
     generateCardTypeInputs();
     renderDeckSummary();
 }

@@ -69,6 +69,8 @@ function loadSetupEventListeners(state, document, calls = {}) {
         'openSearchTools',
         'renderDeckSummary',
         'buildPreviewActionRequest',
+        'clearInPlayCardsState',
+        'rewindActiveCardState',
         'document',
         `${code}; return { setupEventListeners };`
     );
@@ -96,6 +98,19 @@ function loadSetupEventListeners(state, document, calls = {}) {
         noop,
         noop,
         noop,
+        () => {
+            state.inPlayCards = [];
+        },
+        () => {
+            if (state.currentIndex > 0) {
+                state.currentIndex--;
+                if (state.discardPile.length > 0) {
+                    state.discardPile.pop();
+                }
+            } else {
+                state.currentIndex = -1;
+            }
+        },
         document
     );
 }

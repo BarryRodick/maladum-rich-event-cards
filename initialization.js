@@ -10,6 +10,8 @@ import { updateInPlayCardsDisplay } from './card-actions.js';
 import { setupUpdateNotifications } from './update-utils.js';
 import { saveState, loadState } from './storage-utils.js';
 import { mergeCardCatalogs } from './card-data.mjs';
+import { applyCardCatalogIndex, buildCardCatalogIndex } from './card-catalog-index.mjs';
+import { restoreDeckStateFromSnapshot } from './play-snapshot.mjs';
 
 const CACHE_KEYS = {
     cards: 'cachedCardsData',
@@ -42,16 +44,7 @@ export async function initializeApp() {
 
     // 4. Finalize Setup
     if (state.dataStore && state.dataStore.games) {
-        // Build card map
-        state.cardMap.clear();
-        Object.keys(state.dataStore.games).forEach(game => {
-            state.dataStore.games[game].forEach(card => {
-                state.cardMap.set(card.id, card);
-            });
-        });
-
-        // Setup expansion info
-        state.allGames = Object.keys(state.dataStore.games);
+        applyCardCatalogIndex(state, buildCardCatalogIndex(state.dataStore, state.selectedGames));
 
         if (state.allGames.length > 0) {
             // UI Initialization
@@ -167,57 +160,7 @@ async function loadRichCardsData() {
 }
 
 function restoreDeckState(deckState) {
-    function resolveSavedCard(savedCard, collectionName) {
-        if (!savedCard || savedCard.id === undefined || !(state.cardMap instanceof Map)) {
-            return savedCard;
-        }
-
-        const numericId = Number(savedCard.id);
-        if (Number.isFinite(numericId) && state.cardMap.has(numericId)) {
-            return state.cardMap.get(numericId);
-        }
-
-        if (state.cardMap.has(savedCard.id)) {
-            return state.cardMap.get(savedCard.id);
-        }
-
-        console.warn(`Saved ${collectionName} card ${savedCard.id} is missing from the current catalog; using saved fallback.`);
-        return savedCard;
-    }
-
-    function resolveSavedCards(cards, collectionName) {
-        return (cards || []).map(card => resolveSavedCard(card, collectionName));
-    }
-
-    state.currentDeck = resolveSavedCards(deckState.currentDeck, 'currentDeck');
-    state.currentIndex = deckState.currentIndex ?? -1;
-    state.discardPile = resolveSavedCards(deckState.discardPile, 'discardPile');
-    state.sentryDeck = resolveSavedCards(deckState.sentryDeck, 'sentryDeck');
-    state.initialDeckSize = deckState.initialDeckSize || 0;
-    state.inPlayCards = resolveSavedCards(deckState.inPlayCards, 'inPlayCards');
-    state.deck.main = resolveSavedCards(deckState.mainDeck, 'mainDeck');
-    state.deck.special = resolveSavedCards(deckState.specialDeck, 'specialDeck');
-    state.deck.combined = resolveSavedCards(deckState.combinedDeck, 'combinedDeck');
-    if (state.deck.combined.length === 0) {
-        state.deck.combined = state.currentDeck;
-    }
-    if (!state.cards || !state.cards.selected) {
-        state.cards = { selected: new Map() };
-    } else {
-        state.cards.selected.clear();
-    }
-
-    const selectedCards = [
-        ...state.currentDeck,
-        ...state.discardPile,
-        ...state.sentryDeck,
-        ...state.inPlayCards
-    ];
-    selectedCards.forEach(card => {
-        if (card && card.id !== undefined) {
-            state.cards.selected.set(card.id, true);
-        }
-    });
+    restoreDeckStateFromSnapshot(state, deckState);
 
     if (state.currentDeck.length > 0) {
         const activeDeckSection = document.getElementById('activeDeckSection');

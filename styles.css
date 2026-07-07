@@ -2159,6 +2159,8 @@ body {
 .card-footer-icon .card-inline-token__icon {
     width: 1.55rem;
     height: 1.55rem;
+    max-width: 1.55rem;
+    max-height: 1.55rem;
 }
 
 .card-footer-icon .card-inline-token__value {
@@ -2176,6 +2178,10 @@ body {
 .card-inline-token__icon {
     width: 1.05em;
     height: 1.05em;
+    max-width: 1.05em;
+    max-height: 1.05em;
+    flex: 0 0 auto;
+    display: block;
     object-fit: contain;
 }
 
@@ -2217,6 +2223,8 @@ body {
 .card-surface--compact .card-footer-icon .card-inline-token__icon {
     width: 1.2rem;
     height: 1.2rem;
+    max-width: 1.2rem;
+    max-height: 1.2rem;
 }
 
 .card-preview-surface {

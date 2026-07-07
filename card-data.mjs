@@ -104,6 +104,15 @@ export function buildCardSearchText(card) {
         .trim();
 }
 
+function normalizeSearchText(text = '') {
+    return String(text)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ');
+}
+
 export function normalizeCard(rawCard, gameName, sourceKind = 'legacy') {
     const sourceImage = rawCard?.sourceImage || rawCard?.contents || '';
     const footer = rawCard?.footer && typeof rawCard.footer === 'object' && !Array.isArray(rawCard.footer)
@@ -131,9 +140,9 @@ export function normalizeCard(rawCard, gameName, sourceKind = 'legacy') {
         extraction: normalizeExtraction(rawCard?.extraction, sourceKind, sourceImage)
     };
 
-    normalized.searchText = isNonEmptyString(rawCard?.searchText)
-        ? String(rawCard.searchText).trim().toLowerCase()
-        : buildCardSearchText(normalized);
+    normalized.searchText = normalizeSearchText(isNonEmptyString(rawCard?.searchText)
+        ? rawCard.searchText
+        : buildCardSearchText(normalized));
 
     return normalized;
 }
@@ -195,7 +204,7 @@ export function mergeCardCatalogs(legacyCatalog = {}, richCatalog = null) {
 }
 
 export function searchCards(cards = [], rawQuery = '') {
-    const query = String(rawQuery || '').trim().toLowerCase();
+    const query = normalizeSearchText(rawQuery);
     if (!query) {
         return [];
     }

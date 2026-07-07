@@ -2321,7 +2321,7 @@
         {
           "kind": "mode",
           "label": "DISQUIET-DOOM",
-          "text": "The air around you smells rotten and is thick with the odour of decaying food.\n\nRoll one die for each food item carried by each Adventurer. On a Blunder [skull] discard that item.\n\nThese items are considered food: [unknown-icon]"
+          "text": "The air around you smells rotten and is thick with the odour of decaying food.\n\nRoll one die for each food item carried by each Adventurer. On a Blunder [skull] discard that item.\n\nThese items are considered food: Morsel, Provisions, Remedy, Minerals, Sunblessed Weed, Herbs, and Fungus."
         }
       ],
       "footer": {
@@ -2338,14 +2338,12 @@
         "style": "inline-bracket"
       },
       "extraction": {
-        "status": "needs-review",
-        "confidence": 0.8,
-        "issues": [
-          "Printed food item icons after \"These items are considered food:\" remain unresolved."
-        ],
+        "status": "verified",
+        "confidence": 1,
+        "issues": [],
         "managedBy": "human"
       },
-      "searchText": "sudden rot veteran base game disquiet-doom the air around you smells rotten and is thick with the odour of decaying food. roll one die for each food item carried by each adventurer. on a blunder skull discard that item. these items are considered food: unknown-icon veteran"
+      "searchText": "sudden rot veteran base game disquiet-doom the air around you smells rotten and is thick with the odour of decaying food. roll one die for each food item carried by each adventurer. on a blunder skull discard that item. these items are considered food: morsel provisions remedy minerals sunblessed weed herbs fungus veteran"
     },
     {
       "id": 134,

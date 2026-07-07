@@ -272,10 +272,13 @@ async function loadCatalog() {
             'Trap! Caltrops should include both printed Wounded icons');
 
         const suddenRot = cardById(133);
-        assert.strictEqual(suddenRot.extraction.status, 'needs-review',
-            'Sudden Rot should remain unresolved while the food item art list is not extracted');
-        assert(sectionText(suddenRot).includes('[unknown-icon]'),
-            'Sudden Rot should keep an explicit placeholder for the unresolved food item icons');
+        assert.strictEqual(suddenRot.extraction.status, 'verified',
+            'Sudden Rot should be verified once the printed food item list is captured');
+        assert(!sectionText(suddenRot).includes('[unknown-icon]'),
+            'Sudden Rot should not keep unresolved placeholders after food item review');
+        ['Morsel', 'Provisions', 'Remedy', 'Minerals', 'Sunblessed Weed', 'Herbs', 'Fungus'].forEach(item => {
+            assert(sectionText(suddenRot).includes(item), `Sudden Rot should list ${item} as food`);
+        });
     }
 
     console.log('All card catalog coverage tests passed!');

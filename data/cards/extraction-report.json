@@ -3532,11 +3532,9 @@
       "game": "Base Game",
       "card": "Sudden Rot",
       "sourceImage": "Sudden_Rot.png",
-      "status": "needs-review",
-      "confidence": 0.8,
-      "issues": [
-        "Printed food item icons after \"These items are considered food:\" remain unresolved."
-      ],
+      "status": "verified",
+      "confidence": 1,
+      "issues": [],
       "footer": {
         "left": [
           {
